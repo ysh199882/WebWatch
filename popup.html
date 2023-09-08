@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Popup</title>
+    <link rel="stylesheet" href="popup.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="banner">网页使用时长</div>
+
+    <div class="trend-container">
+      <div class="today-usage">
+        <p>今日使用时长 <span id="todayUsage">加载中...</span></p>
+      </div>
+      <div class="weekly-usage">
+        <p>本周趋势</p>
+        <canvas id="weeklyUsageChart" width="300" height="150"></canvas>
+      </div>
+    </div>
+
+    <button class="details-button" id="detailsLink">查看详情</button>
+    <script src="popup.js"></script>
+  </body>
+</html>

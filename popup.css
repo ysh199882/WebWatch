@@ -1,0 +1,66 @@
+body {
+  font-family: 'Pacifico', cursive;
+}
+
+.banner {
+  background: linear-gradient(
+    90deg,
+    rgba(58, 141, 255, 1) 0%,
+    rgba(134, 68, 252, 1) 100%
+  );
+  padding: 10px 0;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.trend-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  flex-direction: row;
+}
+
+.trend-container p {
+  font-size: 20px;
+}
+
+.today-usage,
+.weekly-usage {
+  flex: 1;
+  padding: 10px;
+  min-width: 100px;
+}
+
+.todayUsage {
+  margin-top: 40px;
+}
+
+.weekly-usage {
+  border-left: 1px solid #e0e0e0;
+}
+
+.details-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(58, 141, 255, 1) 0%,
+    rgba(134, 68, 252, 1) 100%
+  );
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.details-button:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(134, 68, 252, 1) 0%,
+    rgba(58, 141, 255, 1) 100%
+  );
+}
