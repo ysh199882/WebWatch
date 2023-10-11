@@ -8,14 +8,20 @@
   </head>
   <body>
     <div id="mainContainer">
-      <input type="file" id="csvFileInput" />
-
       <div class="chart-container">
         <canvas id="usageChart" width="300" height="150"></canvas>
       </div>
 
       <div id="siteStatsContainer"></div>
     </div>
+    <label id="csvLabelLeft">
+      导入csv
+      <input type="file" id="csvFileInput" style="display: none" />
+    </label>
+    <label id="csvLabelRight">
+      导为csv
+      <input type="file" id="csvFileInput" style="display: none" />
+    </label>
     <script src="Chart.min.js"></script>
     <script src="stats.js"></script>
   </body>
