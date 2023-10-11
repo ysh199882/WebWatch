@@ -99,18 +99,27 @@ function renderData(data) {
 //渲染Chart canvas
 function renderChart(data) {
   let ctx = document.getElementById('usageChart').getContext('2d');
+
+  // 添加渐变色
+  let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)');
+  gradient.addColorStop(1, 'rgba(75, 192, 192, 0.2)');
+
   new Chart(ctx, {
     type: 'bar',
     data: {
-      // 调整标签以仅使用主域名
       labels: data.map((item) => getMainDomain(item.url)),
       datasets: [
         {
           label: '使用时长 (分钟)',
-          data: data.map((item) => parseFloat(item['time in seconds']) / 60), // 转为分钟
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          data: data.map((item) => parseFloat(item['time in seconds']) / 60),
+          backgroundColor: gradient,
           borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
+          borderWidth: 0.5,
+          hoverBackgroundColor: 'rgba(75, 192, 192, 0.7)',
+          hoverBorderColor: 'rgba(75, 192, 192, 1)',
+          barPercentage: 0.8,
+          categoryPercentage: 0.7,
         },
       ],
     },
@@ -118,7 +127,41 @@ function renderChart(data) {
       scales: {
         y: {
           beginAtZero: true,
+          ticks: {
+            fontColor: '#666',
+            fontSize: 14,
+          },
         },
+        x: {
+          ticks: {
+            fontColor: '#666',
+            fontSize: 12,
+            autoSkip: true,
+            maxTicksLimit: 10,
+          },
+        },
+      },
+      legend: {
+        labels: {
+          fontColor: '#666',
+          fontSize: 14,
+          fontSize: 16,
+          fontStyle: 'bold',
+        },
+      },
+      title: {
+        display: true,
+        text: '使用时长分析',
+        fontSize: 20,
+        fontColor: '#333',
+      },
+      tooltips: {
+        backgroundColor: 'rgba(75, 192, 192, 0.9)',
+        titleFontColor: '#fff',
+        bodyFontColor: '#fff',
+        cornerRadius: 4,
+        xPadding: 10,
+        yPadding: 10,
       },
     },
   });
