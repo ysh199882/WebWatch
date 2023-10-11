@@ -46,6 +46,22 @@ function exportToCSV(data, filename = '网页浏览时间统计.csv') {
   document.body.removeChild(link);
 }
 
+//获取主域名，为了让Char图标的横坐标更短
+function getMainDomain(url) {
+  try {
+    let hostname = new URL(url).hostname;
+    // 获取二级域名
+    let parts = hostname.split('.');
+    if (parts.length > 2) {
+      return parts.slice(-2).join('.');
+    }
+    return hostname;
+  } catch (e) {
+    console.error('Error parsing URL:', e);
+    return url;
+  }
+}
+
 // 渲染数据到UI
 function renderData(data) {
   const container = document.getElementById('siteStatsContainer');
@@ -80,7 +96,51 @@ function renderData(data) {
   });
 }
 
+//渲染Chart canvas
+function renderChart(data) {
+  let ctx = document.getElementById('usageChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      // 调整标签以仅使用主域名
+      labels: data.map((item) => getMainDomain(item.url)),
+      datasets: [
+        {
+          label: '使用时长 (分钟)',
+          data: data.map((item) => parseFloat(item['time in seconds']) / 60), // 转为分钟
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+  // 初始化：从storage获取数据并渲染
+  getFromStorage(function (data) {
+    // 按使用时长从长到短排序全部数据
+    data.sort(
+      (a, b) =>
+        parseFloat(b['time in seconds']) - parseFloat(a['time in seconds'])
+    );
+
+    // 渲染全部数据到siteStatsContainer
+    renderData(data);
+
+    // 从排序后的数据中选取前十位渲染到canvas
+    let topTen = data.slice(0, 10);
+    renderChart(topTen);
+  });
+
   // 处理CSV文件导入
   document
     .getElementById('csvFileInputImport')
@@ -96,13 +156,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       reader.readAsText(file);
     });
-
-  // 初始化：从storage获取数据并渲染
-  getFromStorage(function (data) {
-    if (data) {
-      renderData(data);
-    }
-  });
 });
 
 // **只保留这一个监听器**
