@@ -27,6 +27,25 @@ function getFromStorage(callback) {
   });
 }
 
+//导出为csv文件
+function exportToCSV(data, filename = '网页浏览时间统计.csv') {
+  // 转换为CSV格式
+  let csvContent =
+    'data:text/csv;charset=utf-8,' +
+    data.map((e) => Object.values(e).join(',')).join('\n');
+
+  // 创建下载链接
+  var encodedUri = encodeURI(csvContent);
+  var link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // 清除创建的链接
+  document.body.removeChild(link);
+}
+
 // 渲染数据到UI
 function renderData(data) {
   const container = document.getElementById('siteStatsContainer');
@@ -64,7 +83,7 @@ function renderData(data) {
 document.addEventListener('DOMContentLoaded', function () {
   // 处理CSV文件导入
   document
-    .getElementById('csvFileInput')
+    .getElementById('csvFileInputImport')
     .addEventListener('change', function (e) {
       let file = e.target.files[0];
       let reader = new FileReader();
@@ -85,3 +104,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+// **只保留这一个监听器**
+document
+  .getElementById('csvFileInputExport')
+  .addEventListener('click', function () {
+    // 获取数据
+    getFromStorage(function (data) {
+      exportToCSV(data);
+    });
+  });

@@ -10,18 +10,25 @@
     <div id="mainContainer">
       <div class="chart-container">
         <canvas id="usageChart" width="300" height="150"></canvas>
+        <div class="csv-buttons">
+          <label id="csvLabelLeft">
+            导入csv
+            <input type="file" id="csvFileInputImport" style="display: none" />
+          </label>
+          <label id="csvLabelRight">
+            导出csv
+            <input
+              type="button"
+              id="csvFileInputExport"
+              style="display: none"
+            />
+          </label>
+        </div>
       </div>
 
       <div id="siteStatsContainer"></div>
     </div>
-    <label id="csvLabelLeft">
-      导入csv
-      <input type="file" id="csvFileInput" style="display: none" />
-    </label>
-    <label id="csvLabelRight">
-      导为csv
-      <input type="file" id="csvFileInput" style="display: none" />
-    </label>
+
     <script src="Chart.min.js"></script>
     <script src="stats.js"></script>
   </body>
