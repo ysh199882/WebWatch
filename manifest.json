@@ -3,7 +3,7 @@
   "name": "网页使用时长",
   "version": "1.0",
   "description": "记录网页使用时长及打开次数",
-  "permissions": ["tabs", "activeTab", "storage"],
+  "permissions": ["tabs", "activeTab", "storage", "fileSystem"],
   "background": {
     "service_worker": "background.js"
   },
