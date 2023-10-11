@@ -38,10 +38,7 @@ function renderData(data) {
   // 清空之前的数据
   container.innerHTML = '';
 
-  // 最多显示的数据条数
-  const maxDataToShow = 10;
-
-  data.slice(0, maxDataToShow).forEach((item) => {
+  data.forEach((item) => {
     const card = document.createElement('div');
     card.className = 'site-card';
 
@@ -53,25 +50,15 @@ function renderData(data) {
       item['time in seconds'] / 60
     ).toFixed(2)} minutes`;
 
-    const openCount = document.createElement('p');
-    openCount.textContent = `Opened: ${item.openCount || 0} times`;
+    /**网址打开次数 */
+    // const openCount = document.createElement('p');
+    // openCount.textContent = `Opened: ${item.openCount || 0} times`;
 
     card.appendChild(domain);
     card.appendChild(timeSpent);
-    card.appendChild(openCount);
+    // card.appendChild(openCount);
     container.appendChild(card);
   });
-
-  // 如果数据超过10条，显示"show more"按钮
-  if (data.length > maxDataToShow) {
-    const showMoreBtn = document.createElement('button');
-    showMoreBtn.textContent = 'Show More';
-    showMoreBtn.addEventListener('click', function () {
-      renderData(data.slice(maxDataToShow));
-      showMoreBtn.style.display = 'none'; // 隐藏按钮
-    });
-    container.appendChild(showMoreBtn);
-  }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
