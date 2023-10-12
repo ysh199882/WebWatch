@@ -26,6 +26,7 @@ function parseCSV(data) {
     }
   });
 
+  console.log(parsedData, 'data', data);
   // 将键值对数据转换为数组形式
   for (let mainDomain in totalTimeMap) {
     parsedData.push({
@@ -71,16 +72,22 @@ function exportToCSV(data, filename = '网页浏览时间统计.csv') {
 //获取主域名，为了让Char图标的横坐标更短
 function getMainDomain(url) {
   try {
-    let hostname = new URL(url).hostname;
-    // 获取二级域名
-    let parts = hostname.split('.');
-    if (parts.length > 2) {
-      return parts.slice(-2).join('.');
+    // 检查url中的点号数量
+    const dotCount = (url.match(/\./g) || []).length;
+
+    // 如果有两个点号，如 "sub.openai.com"
+    if (dotCount === 2) {
+      return url.split('.').slice(-2).join('.');
     }
-    return hostname;
+    // 如果有一个点号，如 "openai.com"
+    else if (dotCount === 1) {
+      return url;
+    } else {
+      return url;
+    }
   } catch (e) {
-    console.error('Error parsing URL:', e);
-    return url;
+    console.error('Error processing domain:', e);
+    return url; // 返回原始url作为降级
   }
 }
 
@@ -242,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// **只保留这一个监听器**
+//导出csv
 document
   .getElementById('csvFileInputExport')
   .addEventListener('click', function () {
