@@ -1,5 +1,6 @@
-/**解析csv数据 */
+/**解析csv数据并基于主域名去重 */
 function parseCSV(data) {
+  let intermediateData = [];
   let parsedData = [];
   let rows = data.trim().split('\n');
   let headers = rows[0].split(',');
@@ -10,8 +11,29 @@ function parseCSV(data) {
     for (let j = 0; j < headers.length; j++) {
       obj[headers[j].trim()] = currentRow[j].trim();
     }
-    parsedData.push(obj);
+    intermediateData.push(obj);
   }
+
+  // 创建一个键值对来存储每个网站的总使用时长
+  let totalTimeMap = {};
+
+  intermediateData.forEach((item) => {
+    let mainDomain = getMainDomain(item.url);
+    if (!totalTimeMap[mainDomain]) {
+      totalTimeMap[mainDomain] = parseFloat(item['time in seconds']);
+    } else {
+      totalTimeMap[mainDomain] += parseFloat(item['time in seconds']);
+    }
+  });
+
+  // 将键值对数据转换为数组形式
+  for (let mainDomain in totalTimeMap) {
+    parsedData.push({
+      url: mainDomain,
+      'time in seconds': totalTimeMap[mainDomain].toString(),
+    });
+  }
+
   return parsedData;
 }
 
@@ -167,21 +189,41 @@ function renderChart(data) {
   });
 }
 
+//合并去重csv和storage中数据
+function mergeAndProcessData(importedData) {
+  getFromStorage(function (storageData) {
+    // 合并storageData和importedData
+    let mergedData = storageData.concat(importedData);
+
+    // 使用parseCSV进行去重和处理
+    let processedData = parseCSV(mergedData.join('\n'));
+
+    // 排序
+    processedData.sort(
+      (a, b) =>
+        parseFloat(b['time in seconds']) - parseFloat(a['time in seconds'])
+    );
+
+    // 保存处理后的数据到chrome.storage
+    saveToStorage(processedData);
+
+    // 渲染数据
+    renderData(processedData);
+    renderChart(processedData.slice(0, 10));
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   // 初始化：从storage获取数据并渲染
   getFromStorage(function (data) {
-    // 按使用时长从长到短排序全部数据
+    // 排序数据
     data.sort(
       (a, b) =>
         parseFloat(b['time in seconds']) - parseFloat(a['time in seconds'])
     );
 
-    // 渲染全部数据到siteStatsContainer
     renderData(data);
-
-    // 从排序后的数据中选取前十位渲染到canvas
-    let topTen = data.slice(0, 10);
-    renderChart(topTen);
+    renderChart(data.slice(0, 10));
   });
 
   // 处理CSV文件导入
@@ -192,9 +234,8 @@ document.addEventListener('DOMContentLoaded', function () {
       let reader = new FileReader();
 
       reader.onload = function (event) {
-        const parsedData = parseCSV(event.target.result);
-        saveToStorage(parsedData);
-        renderData(parsedData);
+        const importedData = parseCSV(event.target.result); // 解析CSV文件内容
+        mergeAndProcessData(importedData); // 合并、处理、排序并渲染数据
       };
 
       reader.readAsText(file);
